@@ -9,10 +9,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -26,7 +29,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authz) ->
                         authz.anyRequest().authenticated()
-                )
+                );
+        http
                 .formLogin()
 //                .loginPage("/loginPage")
                 .defaultSuccessUrl("/")
@@ -49,6 +53,25 @@ public class SecurityConfig {
                     }
                 })
                 .permitAll()
+                .and();
+        http
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .addLogoutHandler(new LogoutHandler() {
+                    @Override
+                    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+                        HttpSession session = request.getSession();
+                        session.invalidate();
+                    }
+                })
+                .logoutSuccessHandler(new LogoutSuccessHandler() {
+                    @Override
+                    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                        response.sendRedirect("/login");
+                    }
+                })
+                .deleteCookies("remember-me")
                 .and()
                 .httpBasic(withDefaults());
         return http.build();
