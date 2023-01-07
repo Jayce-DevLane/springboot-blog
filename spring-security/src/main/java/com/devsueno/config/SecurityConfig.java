@@ -79,6 +79,11 @@ public class SecurityConfig {
                 .deleteCookies("remember-me")
                 .and();
         http
+                .sessionManagement()
+                .sessionFixation().changeSessionId(); // 세션 고정 보호 기능
+//                .maximumSessions(1)
+//                .maxSessionsPreventsLogin(false); // true 인증 초과 시 다음 유저는 접속 안됨; false 는 기존 접근된 세션을 종료 시킴
+        http
                 .rememberMe()
                 .rememberMeParameter("remember")
                 .tokenValiditySeconds(3600)
