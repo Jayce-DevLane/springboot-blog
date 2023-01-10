@@ -7,7 +7,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -32,10 +35,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authz) ->
-                        authz.anyRequest().authenticated()
-                );
-        http
+                .authorizeRequests((authz) ->
+                        authz.antMatchers("/user").hasRole("USER")
+                                .antMatchers("/admin/pay").hasRole("ADMIN")
+                                .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
+                                .anyRequest().authenticated()
+                )
                 .formLogin()
 //                .loginPage("/loginPage")
                 .defaultSuccessUrl("/")
@@ -58,8 +63,7 @@ public class SecurityConfig {
                     }
                 })
                 .permitAll()
-                .and();
-        http
+                .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
@@ -77,12 +81,11 @@ public class SecurityConfig {
                     }
                 })
                 .deleteCookies("remember-me")
-                .and();
-        http
+                .and()
                 .sessionManagement()
                 .sessionFixation().changeSessionId(); // 세션 고정 보호 기능
 //                .maximumSessions(1)
-//                .maxSessionsPreventsLogin(false); // true 인증 초과 시 다음 유저는 접속 안됨; false 는 기존 접근된 세션을 종료 시킴
+//                .maxSessionsPreventsLogin(false) // true 인증 초과 시 다음 유저는 접속 안됨; false 는 기존 접근된 세션을 종료 시킴
         http
                 .rememberMe()
                 .rememberMeParameter("remember")
