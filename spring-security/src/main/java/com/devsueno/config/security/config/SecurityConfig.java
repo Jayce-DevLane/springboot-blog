@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,7 +26,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import javax.servlet.http.HttpServletRequest;
 
 @Configuration
-//@EnableWebSecurity
+@Order(1)
 public class SecurityConfig {
 
     @Autowired
