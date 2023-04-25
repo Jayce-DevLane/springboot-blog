@@ -4,6 +4,7 @@ import com.ensueno.order.OrderRepository;
 import com.ensueno.order.OrderService;
 import com.ensueno.order.aop.AspectV1;
 import com.ensueno.order.aop.AspectV2;
+import com.ensueno.order.aop.AspectV3;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-@Import(AspectV2.class)
+@Import(AspectV3.class)
 @Slf4j
 @SpringBootTest
 public class AopTest {
